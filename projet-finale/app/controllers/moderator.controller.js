@@ -480,26 +480,6 @@ exports.updateSeance = async (req, res) => {
     if (!seance) {
       return res.status(404).send({ message: "Séance non trouvée" });
     }
-    
-    // Na7i conflit mta3 séances
-    const conflit = await db.seance.findOne({
-      where: {
-        id: { [Op.ne]: req.params.id },
-        id_salle: req.body.id_salle,
-        date_heure: {
-          [Op.between]: [
-            new Date(new Date(req.body.date_heure).getTime() - 2 * 60 * 60 * 1000), // 2h avant
-            new Date(new Date(req.body.date_heure).getTime() + 2 * 60 * 60 * 1000)  // 2h après
-          ]
-        }
-      }
-    });
-
-    if (conflit) {
-      return res.status(400).send({ 
-        message: "La salle est déjà réservée pour une séance proche de cette heure" 
-      });
-    }
 
     // Badal séance
     await seance.update({
