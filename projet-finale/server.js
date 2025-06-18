@@ -1,51 +1,54 @@
+// melek
 const express = require("express");
 const cors = require("cors");
 const path = require("path");
+// ahmed
 const methodOverride = require('method-override');
-
+//melek
 const app = express();
 
-// 3ala5ater na3mlou CORS mta3 frontend
+// middleware CORS
 app.use(cors({ origin: "http://localhost:8081" }));
 
-// Na7i l'khata2 mta3 JSON w URL-encoded
+// parser JSON et URL-encoded
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// 3ala5ater na3mlou PUT/DELETE fi form
+//ahmed
+// bech nista3mlo PUT/DELETE bil _method fi form
 app.use(methodOverride('_method'));
-
-// 3ala5ater na3mlou serve l static files (CSS, JS, images)
+//melek
+// Servir les fichiers statiques (CSS, JS, images génériques) dans /app
 app.use(express.static(path.join(__dirname, "app")));
-
-// 3ala5ater na3mlou serve les images mta3 films
+//rihab
+// Servir le dossier uploads pour les images des films
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
-
-// Configuration mta3 EJS
+//melek
+// Conf les moteur mta3 vues
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "app", "views"));
 
-// Na7i les models mta3 Sequelize
+// jiben les modèles Sequelize
 const db = require("./app/models");
-
-// Na7i les routes
+//ahmed(salle,reservation)+melek(seance)+rihab(le reste)
+// jiben les routes
 const moderatorRoutes = require("./app/routes/moderator.routes");
 const filmRoutes = require("./app/routes/film.routes");
 const reservationRoutes = require('./app/routes/reservation.routes');
 const paymentRoutes = require('./app/routes/payments.routes');
-
-// 3ala5ater na3mlou use l routes
+//ahmed(salle,reservation)+melek(seance)+rihab(le reste)
+// isti3mel routes
 app.use("/moderator", moderatorRoutes);
-app.use("/", filmRoutes); // routes mta3 films
+app.use("/", filmRoutes); // tes routes films ici
 app.use('/reservations', reservationRoutes);
 app.use('/payments', paymentRoutes);
-
-// Routes API JSON
+// melek
+// routes API JSON o5rin
 require('./app/routes/auth.routes')(app);
 require('./app/routes/user.routes')(app);
 require("./app/routes/page.routes")(app);
 
-// 3ala5ater na3mlou sync DB w na3mlou roles par défaut
+// n3adiw synchronisation mta3 base de données bi role
 db.sequelize.sync({ alter: true }).then(() => {
     console.log("Database synced");
 
@@ -67,8 +70,8 @@ db.sequelize.sync({ alter: true }).then(() => {
     console.error("Error during DB setup:", err);
   });
 
-// 3ala5ater na3mlou démarrage serveur
+// t5adem serveur
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}.`);
+   console.log(`Server is running on port ${PORT}.`);
 });
